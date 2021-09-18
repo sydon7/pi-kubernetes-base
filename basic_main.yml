@@ -1,0 +1,56 @@
+---
+- hosts: pis
+  become: true
+  vars:
+     kubemaster: 'kube1'
+
+
+  vars_files:
+    - vars/main.yml
+    - config.yml
+
+  pre_tasks:
+
+    - name: Ensure dependencies are installed.
+      apt:
+        name:
+          - sudo
+          - openssh-server
+        state: present
+
+    - import_tasks: basic_tasks/cgroup-features.yml
+    - import_tasks: basic_tasks/disable-swap.yml
+      tags: ['always']
+
+    - import_tasks: tasks/net-setup.yml
+      when:
+        - ansible_distribution_version == "10"
+        - deploy_target != 'docker'
+
+    - name: Set the master node IP.
+      set_fact:
+        kubernetes_master_ip: "{{ hostvars[kubemaster]['ansible_host'] }}"
+      tags: ['always']
+
+  roles:
+    - role: geerlingguy.security
+      tags: ['security']
+
+    - role: geerlingguy.swap
+      tags: ['always', 'swap']
+      when: deploy_target == 'vagrant'
+
+    - role: geerlingguy.nfs
+      tags: ['nfs']
+      when: deploy_target != 'docker'
+
+    - role: geerlingguy.pip
+      tags: ['pip', 'docker']
+
+    - role: geerlingguy.containerd
+      tags: ['containerd']
+
+    - role: geerlingguy.kubernetes
+      tags: ['kubernetes']
+
+

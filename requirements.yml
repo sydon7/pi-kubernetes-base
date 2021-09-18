@@ -1,0 +1,7 @@
+---
+- src: geerlingguy.security
+- src: geerlingguy.swap
+- src: geerlingguy.nfs
+- src: geerlingguy.pip
+- src: geerlingguy.containerd
+- src: geerlingguy.kubernetes
