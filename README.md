@@ -20,7 +20,7 @@ pointed to amd64 instead of arm64).
 
 # Buidling the base cluster:
 
-## pi version
+## Image the pi's
 I am using this image raspion_lite_arm64-2020-08-24 (or newer)
 
 ## Basic setup
@@ -32,19 +32,24 @@ here are my cliff notes for each PI
 * Make sure to create a file on the card called "ssh". When the PI boots, it will enable
 sshd by default. (touch /Volumes/boot/ssh assuming your card is mounted at /Volumes)
 
+
+## Basic network setup
+
 * Find your PI. Assuming your home lan was 10.1.1.0/24. They should have gotten a DHCP address
 we are going to find them and give each PI a static address
 ```
   sudo nmap -sP 10.1.1.0/24
 ```
 
-* ssh into the pi (google the default user/password if you need to)
+* ssh into the pi (google the default user/password if you need to) and setup pre-shared keys
 ```
  ssh pi@10.1.1.99
 ```
 
 
-* copy the example.inventory to a file called inventory. Configure the
+From the baseic_setup/networking directory:
+
+*copy the example.inventory to a file called inventory. Configure the
 list of IP's for the PI's. This should be the current DHCP addresses
 that are reachable. 
 
@@ -79,6 +84,8 @@ reboot
 ```
 
 ## Kubernets cluster build
+
+In the main directory:
 
 * Copy the inventory.sav to a file called inventory and configure the hosts file to match
 your nodes
